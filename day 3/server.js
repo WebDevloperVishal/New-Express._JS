@@ -1,30 +1,37 @@
-import express from "express";
-import cookieParser from "cookie-parser";
+import express from 'express'
+const app = express()
+import cookieParser, { signedCookie } from "cookie-parser"
+const port = 8080
 
-const app = express();
+app.use(express.json())
+app.use(cookieParser("377abd5f7e10ed9f69c5ba81fab180208e524bd5dd183628532e67cb661b336f"))
 
-const port = 5000;
+app.get('/', (req, res) => res.send('Hello World!'))
 
-app.use(cookieParser())
-
-app.get("/", (req, res) => {
-  res.send("hello world");
-});
-
-app.get('/set-cookies' , (req , res)=>{
-    // res.cookie("token" , "my-token" , {maxAge:1000 * 60 * 60 * 24});
-    res.cookie("age" , "20" , {signed:true})
-    res.send("cookies set")
+app.get('/set-cookies', (req, res) => {
+    // res.cookie('token', 'my-token', { maxAge: 1000 * 60 * 60 * 24 });
+    res.cookie("theme", "dark",  {signed:true})
+    res.cookie("age", "21",  {signed:true})
+    console.log(req.cookies);
+    
+    res.send('cookie set')
+    // res.status(500).send(error.message)
 })
 
+app.get('/get-cookies', (req, res) => {
+    // res.cookie('token' , 'my-token'); 
+    // console.log(req.cookies.token);
+    console.log(req.signedCookies.age);
+    console.log(req.signedCookies.theme);
 
-app.get("/get-cookies" , (req , res)=>{
-    // console.log(req.cookies.token); // undefined
-    console.log(req.signedCookies.age)
-    // console.log(req.headers.cookie) // token=my-token
-    res.send("cookies get")
+    res.send('cookie get')
+
+    // res.status(500).send(error.message)
 })
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+app.post('/', (req, res) => {
+    console.log(req.body)
+    res.json({ success: true })
+})
+
+app.listen(port, () => console.log(`Server is runniing on port http://localhost:8080`))
